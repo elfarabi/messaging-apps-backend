@@ -1,5 +1,7 @@
 import Sequelize from 'sequelize';
 
+require('dotenv').config();
+
 const Op = Sequelize.Op;
 const operatorsAliases = {
   $eq: Op.eq,
@@ -14,7 +16,7 @@ const operatorsAliases = {
   $limit: Op.limit,
 };
 
-export const sequelize = new Sequelize('new_database', 'postgres', process.env.PSQL_PASSWORD, {
+export const sequelize = new Sequelize(process.env.PSQL_DATABASE, process.env.PSQL_USER, process.env.PSQL_PASSWORD, {
   host: process.env.PSQL_HOST,
   dialect: 'postgres',
   operatorsAliases,
