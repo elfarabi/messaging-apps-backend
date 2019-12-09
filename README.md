@@ -1,6 +1,6 @@
 # Messaging Apps for Backend
 
-Messaging Apps adalah suatu aplikasi backend untuk feature chatting. Project ini menggunakan bahasa pemprograman Node.js and database postgreSQL.
+Messaging Apps is a backend application for chat features. This project uses the Node.js programming language and the postgreSQL database.
 
 ## Table of Contents
 
