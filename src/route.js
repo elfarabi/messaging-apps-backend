@@ -10,5 +10,7 @@ router.post('/user/login', userController.login);
 
 router.post('/chat/send', isAuthenticated, chatController.sendMessage);
 router.get('/chat/get', isAuthenticated, chatController.getMessage);
+router.get('/chat/last', isAuthenticated, chatController.getLastMessage);
+router.get('/chat/unread', isAuthenticated, chatController.getUnreadMessage);
 
 module.exports = router;

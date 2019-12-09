@@ -98,3 +98,67 @@ export const getConversation = async ({ userId }, res) => {
     message: 'User Not Found'
   });
 };
+
+export const lastMessage = async (req, res) => {
+  const idUser = res.locals.decode.id;
+  const findChatRoom = await ChatRoom.findOne({
+    where: {
+      $or: [
+        {
+          userOneId: idUser,
+        },
+        {
+          userTwoId: idUser
+        }
+      ]
+    },
+    order: [
+      ['createdAt', 'DESC']
+    ]
+  });
+  if (findChatRoom) {
+    const idChatRoom = findChatRoom.id;
+    const findChatContent = await ChatContent.findOne({
+      where: {
+        'chatRoomId': idChatRoom
+      },
+      order: [
+        ['createdAt', 'DESC']
+      ]
+    });
+    return Promise.resolve({
+      success: true,
+      data: findChatContent
+    });
+  }
+  return Promise.reject({
+    success: false,
+    message: 'Not Found'
+  });
+};
+
+export const unreadMessage = async (req, res) => {
+  const idUser = res.locals.decode.id;
+  const findChatRoom = await ChatRoom.findAll({
+    where: {
+      'userTwoId': idUser
+    }
+  });
+
+  if (findChatRoom) {
+    const idRoom = findChatRoom.map(idx => {
+      return idx.dataValues.id;
+    });
+    const findChatContent = await ChatContent.findAndCountAll({
+      where: {
+        'chatRoomId': idRoom,
+        'isRead': false
+      }
+    });
+    return Promise.resolve(findChatContent);
+  }
+  return Promise.reject({
+    success: false,
+    message: 'No Message'
+  });
+};
