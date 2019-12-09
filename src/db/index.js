@@ -9,10 +9,13 @@ const operatorsAliases = {
   $values: Op.values,
   $col: Op.col,
   $or: Op.or,
-  $and: Op.and
+  $and: Op.and,
+  $order: Op.order,
+  $limit: Op.limit,
 };
-export const sequelize = new Sequelize('new_database', 'postgres', 'postgres', {
-  host: 'localhost',
+
+export const sequelize = new Sequelize('new_database', 'postgres', process.env.PSQL_PASSWORD, {
+  host: process.env.PSQL_HOST,
   dialect: 'postgres',
   operatorsAliases,
 });
@@ -23,4 +26,4 @@ sequelize.authenticate().then(() => {
 })
 .catch(err => {
   console.error('Unable to connect to the database', err);
-})
+});
