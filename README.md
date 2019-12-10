@@ -268,31 +268,31 @@ $ npm run start:dev
     ```
     [
         {
-            "id": 5,
-            "content": "03. user3 => user1",
-            "isRead": false,
-            "createdAt": "2019-12-09T07:53:32.806Z",
-            "updatedAt": "2019-12-09T07:53:32.806Z",
-            "chatRoomId": 4,
-            "userId": 3
+            "id": 6,
+            "content": "03. user1 => user3",
+            "isRead": true,
+            "createdAt": "2019-12-10T01:17:00.802Z",
+            "updatedAt": "2019-12-10T01:51:25.766Z",
+            "chatRoomId": 2,
+            "userId": 1
         },
         {
-            "id": 4,
-            "content": "02. user3 => user1",
-            "isRead": false,
-            "createdAt": "2019-12-08T20:55:08.283Z",
-            "updatedAt": "2019-12-08T20:55:08.283Z",
-            "chatRoomId": 4,
-            "userId": 3
+            "id": 5,
+            "content": "02. user1 => user3",
+            "isRead": true,
+            "createdAt": "2019-12-09T15:52:11.730Z",
+            "updatedAt": "2019-12-10T01:51:25.766Z",
+            "chatRoomId": 2,
+            "userId": 1
         },
         {
             "id": 3,
-            "content": "01. user1 => user3",
-            "isRead": false,
-            "createdAt": "2019-12-08T20:54:36.361Z",
-            "updatedAt": "2019-12-08T20:54:36.361Z",
-            "chatRoomId": 3,
-            "userId": 1
+            "content": "01. user3 => user1",
+            "isRead": true,
+            "createdAt": "2019-12-09T15:47:03.161Z",
+            "updatedAt": "2019-12-09T16:28:41.569Z",
+            "chatRoomId": 2,
+            "userId": 3
         }
     ]
     ```
@@ -331,17 +331,29 @@ $ npm run start:dev
     ```
     ```
     {
-        "success": true,
-        "data": {
+    "success": true,
+    "unread": 1,
+    "data": [
+        {
             "id": 2,
             "content": "02. user2 => user1",
             "isRead": false,
-            "createdAt": "2019-12-08T20:52:52.232Z",
-            "updatedAt": "2019-12-08T20:52:52.232Z",
-            "chatRoomId": 2,
+            "createdAt": "2019-12-09T15:44:03.046Z",
+            "updatedAt": "2019-12-09T15:44:03.046Z",
+            "chatRoomId": 1,
             "userId": 2
+        },
+        {
+            "id": 6,
+            "content": "03. user1 => user3",
+            "isRead": true,
+            "createdAt": "2019-12-10T01:17:00.802Z",
+            "updatedAt": "2019-12-10T01:51:25.766Z",
+            "chatRoomId": 2,
+            "userId": 1
         }
-    }
+    ]
+}
     ```
 
 - **Error Response**

@@ -14,6 +14,7 @@ User.init({
     name: { type: Sequelize.STRING, allowNull: false },
 }, { sequelize, modelName: 'user'});
 
+// User.hasMany(ChatRoom, { as: 'chatRoomsOne', foreignKey: 'userOneId', foreignKey: 'userTwoId' });
 User.hasMany(ChatRoom, { as: 'chatRoomsOne', foreignKey: 'userOneId' });
 User.hasMany(ChatRoom, { as: 'chatRoomsTwo', foreignKey: 'userTwoId' });
 User.hasMany(ChatContent, { as: 'chatContents', foreignKey: 'userId' });

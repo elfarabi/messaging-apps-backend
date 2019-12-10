@@ -1,21 +1,17 @@
 import { User, ChatRoom, ChatContent } from '../model';
 
-const findChatRoomInDB = async (idUserOne, idUserTwo) => {
-  let find = await ChatRoom.findOne({
-    where: { 'userOneId': idUserOne, 'userTwoId': idUserTwo }
-  });
-  if (find != null) return find;
-
-  return find;
-};
-
 export const sendMessage = async ({ userId, message }, res) => {
   const findUser = await User.findOne({ where: { email: userId } });
 
   if (findUser) {
     const idUserOne = res.locals.decode.id;
     const idUserTwo = findUser.dataValues.id;
-    const findChatRoom = await findChatRoomInDB(idUserOne, idUserTwo);
+    const findChatRoom = await ChatRoom.findOne({
+      where: {
+        'userOneId': [idUserOne, idUserTwo],
+        'userTwoId': [idUserOne, idUserTwo]
+      }
+    });
 
     if (findChatRoom) {
       /* Create Chat Conten if exist Chat Room */
@@ -26,7 +22,7 @@ export const sendMessage = async ({ userId, message }, res) => {
       });
       return Promise.resolve({
         success: true,
-        data: createChatContent,
+        data: createChatContent
       });
     }
     /* Create Chat Room if not exists Chat Room */
@@ -39,23 +35,17 @@ export const sendMessage = async ({ userId, message }, res) => {
       /* Create Chat Content after Create Chat Room */
       const createChatContent = await ChatContent.create({
         content: message,
-        chatRoomId,
+        chatRoomId: createChatRoom.id,
         userId: idUserOne
       });
       return Promise.resolve({
         success: true,
-        message: createChatContent
+        data: createChatContent
       });
     }
-    return Promise.reject({
-      success: false,
-      message: 'Cannot Create Chat Room'
-    });
+    return Promise.reject({message: 'failed to create chat room'});
   }
-  return Promise.reject({
-    success: false,
-    message: 'user not found'
-  });
+  return Promise.reject({message: 'user not found'});
 };
 
 export const getConversation = async ({ userId }, res) => {
@@ -64,101 +54,91 @@ export const getConversation = async ({ userId }, res) => {
   if (findUser) {
     const idUserOne = res.locals.decode.id;
     const idUserTwo = findUser.dataValues.id;
-    const findRoomContent = await ChatRoom.findAll({
+    const findChatRoom = await ChatRoom.findOne({
       where: { 'userOneId': [idUserOne, idUserTwo], 'userTwoId': [idUserOne, idUserTwo] },
     });
-    if (findRoomContent) {
-      const getRoomId = findRoomContent.map(index => {
-        const contentMessage = index.dataValues.id;
-        return contentMessage;
+
+    if (findChatRoom) {
+      await ChatContent.update(
+        { isRead: true },
+        { where: { 'chatRoomId': findChatRoom.id, 'userId': idUserOne } }
+      );
+      const findChatContent = await ChatContent.findAll({
+        where: { 'chatRoomId': findChatRoom.id },
+        order: [['createdAt', 'DESC']]
       });
-      const getUserId = findRoomContent.map(index => {
-        const roomId = index.dataValues.userOneId;
-        return roomId;
-      });
-      if (getUserId.length > 0 && getRoomId.length > 0) {
-        const findChatConversation = ChatContent.findAll({
-          where: { 'chatRoomId': getRoomId, 'userId': getUserId },
-          order: [['createdAt', 'DESC']]
-        });
-        return Promise.resolve(findChatConversation);
-      }
-      return Promise.reject({
-        success: false,
-        message: 'No Message'
+      return Promise.resolve({
+        success: true,
+        data: findChatContent
       });
     }
-    return Promise.reject({
-      success: false,
-      message: 'No Message'
-    });
+    return Promise.reject({ message: 'chat room not found' });
   }
-  return Promise.reject({
-    success: false,
-    message: 'User Not Found'
-  });
+  return Promise.reject({ message: 'user not found' });
 };
 
 export const lastMessage = async (req, res) => {
-  const idUser = res.locals.decode.id;
-  const findChatRoom = await ChatRoom.findOne({
+  const idUserOne = res.locals.decode.id;
+
+  const findChatRoom = await ChatRoom.findAll({
     where: {
       $or: [
         {
-          userOneId: idUser,
+          'userOneId': idUserOne,
         },
         {
-          userTwoId: idUser
+          'userTwoId': idUserOne
         }
       ]
-    },
-    order: [
-      ['createdAt', 'DESC']
-    ]
-  });
-  if (findChatRoom) {
-    const idChatRoom = findChatRoom.id;
-    const findChatContent = await ChatContent.findOne({
-      where: {
-        'chatRoomId': idChatRoom
-      },
-      order: [
-        ['createdAt', 'DESC']
-      ]
-    });
-    return Promise.resolve({
-      success: true,
-      data: findChatContent
-    });
-  }
-  return Promise.reject({
-    success: false,
-    message: 'Not Found'
-  });
-};
-
-export const unreadMessage = async (req, res) => {
-  const idUser = res.locals.decode.id;
-  const findChatRoom = await ChatRoom.findAll({
-    where: {
-      'userTwoId': idUser
     }
   });
 
   if (findChatRoom) {
-    const idRoom = findChatRoom.map(idx => {
+    const getIdChatRoom = findChatRoom.map(idx => {
       return idx.dataValues.id;
     });
-    const findChatContent = await ChatContent.findAndCountAll({
-      where: {
-        'chatRoomId': idRoom,
-        'isRead': false
-      }
+    
+    let query = [];
+    const getChatContentOne = await ChatContent.findOne({
+      limit: 1,
+      where: { 'chatRoomId': getIdChatRoom[0] },
+      order: [['createdAt', 'DESC']]
     });
-    return Promise.resolve(findChatContent);
+    query.push(getChatContentOne);
+    const getChatContentTwo = await ChatContent.findOne({
+      limit: 1,
+      where: { 'chatRoomId': getIdChatRoom[1] || getIdChatRoom },
+      order: [['createdAt', 'DESC']]
+    });
+    query.push(getChatContentTwo);
+
+    let valueContent = query;
+    const idQueryOne = query[0].dataValues.id;
+    const idQueryTwo = query[1].dataValues.id;
+
+    const getUnreadOne = await ChatContent.findAll({
+      where: { 'chatRoomId': getIdChatRoom[0], 'userId': idUserOne, 'isRead': false }
+    });
+    const unreadOne = getUnreadOne.length;
+
+    const getUnreadTwo = await ChatContent.findAll({
+      where: { 'chatRoomId': getIdChatRoom[1] || getIdChatRoom, 'userId': idUserOne, 'isRead': false }
+    });
+    const unreadTwo = getUnreadTwo.length;
+
+    if (idQueryOne === idQueryTwo) {
+      const id = valueContent[0].id;
+      return Promise.resolve({
+        success: true,
+        unread: unreadOne,
+        data: valueContent[0]
+      });
+    }
+    return Promise.resolve({
+      success: true,
+      unread: unreadOne,
+      data: valueContent
+    });
   }
-  return Promise.reject({
-    success: false,
-    message: 'No Message'
-  });
+  return Promise.reject({ message: 'chat room not found' });
 };
