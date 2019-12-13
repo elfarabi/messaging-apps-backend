@@ -17,6 +17,7 @@ Messaging Apps is a backend application for chat features. This project uses the
 ## New Update
 
 - #### Get All Last Message and Count unRead Message
+- #### Add for Unit Test
 
 ## Getting Started
 
@@ -66,6 +67,14 @@ $ npm install
 $ npm run start:dev
 ```
 
+### Unit Test
+
+In this project using unit test and code coverage by jest. To run unit test on your local machine.
+
+```
+$ npm run cover
+```
+
 ## Features
 
 - [Node.Js](https://nodejs.org/)
@@ -75,6 +84,8 @@ $ npm run start:dev
 - [Sequelize](https://sequelize.org/)
 
 - [JSON Web Token (JWT)](https://jwt.io/)
+
+- [JEST](https://jestjs.io/)
 
 ## Folder Structure
 
@@ -106,6 +117,10 @@ $ npm run start:dev
 ```
 
 ## Documentation
+
+To try it direcly, you can import documentation to the postman and run server in your local machine to get try.
+
+The documentation in the folder test with name file 
 
 - [Signup User](#signup-user)
 - [Login User](#login-user)

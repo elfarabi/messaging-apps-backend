@@ -1,0 +1,529 @@
+{
+	"info": {
+		"_postman_id": "b5e1a460-bc32-46ba-938b-ea88c2e4f957",
+		"name": "messaging-apps-backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post Signup User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5648b9c3-2b17-4419-81f5-229bb98d7cf8",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+							"});",
+							"",
+							"pm.test(\"Status Code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(true);",
+							"    pm.expect(jsonData.message).to.eql(\"Success create account\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"user4@email.com\",\n\t\"password\": \"user4\",\n\t\"name\": \"user4\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/user/signup"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Signup User with Invalid Body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ec06e385-45e5-4239-88ea-fa549075b971",
+						"exec": [
+							"pm.test(\"Status Code 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Body returned matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"status\");",
+							"    pm.expect(pm.response.text()).to.include(\"message\");",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(false);",
+							"    pm.expect(jsonData.message).to.eql(\"data and salt arguments required\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"user4@email.com\",\n\t\"name\": \"user4\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/user/signup"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "66c63498-16a6-4c37-b3f7-95464d545f02",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+							"});",
+							"",
+							"pm.test(\"Status Code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"user4@email.com\",\n\t\"password\": \"user4\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/user/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Login User with Invalid Body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "507e7d75-50a9-461a-9a55-5bf1bb8e22bb",
+						"exec": [
+							"pm.test(\"Status Code 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Body returned matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"status\");",
+							"    pm.expect(pm.response.text()).to.include(\"message\");",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(false);",
+							"    pm.expect(jsonData.message).to.eql(\"data and hash arguments required\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"user4@email.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/user/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Send Message",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9647aa50-3e8d-429f-a014-522d8c72b5c0",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+							"});",
+							"",
+							"pm.test(\"Status Code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTc2MjQ5MDU0LCJleHAiOjE1Nzg4NDEwNTR9.aWgqIwgNak0ahJj4ZlrLabQvFHf5uI8HQjoKeEGj4tc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"user1@email.com\",\n\t\"message\": \"03. user3 => user1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/chat/send"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Send Message without Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2f559789-2a4d-4dc2-b3b1-7836fe069b5a",
+						"exec": [
+							"pm.test(\"Status Code 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Body returned matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"    pm.expect(pm.response.text()).to.include(\"message\");",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(false);",
+							"    pm.expect(jsonData.message).to.eql(\"No token provided\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTc2MjQ5MDU0LCJleHAiOjE1Nzg4NDEwNTR9.aWgqIwgNak0ahJj4ZlrLabQvFHf5uI8HQjoKeEGj4tc",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"user1@email.com\",\n\t\"message\": \"03. user3 => user1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/chat/send"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Send Message with invalid Body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "86e1a6d9-5a94-4a9d-b5c8-c2d2b4bbcf8d",
+						"exec": [
+							"pm.test(\"Status Code 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Body returned matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"    pm.expect(pm.response.text()).to.include(\"message\");",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(false);",
+							"    pm.expect(jsonData.message).to.eql(\"WHERE parameter \\\"email\\\" has invalid \\\"undefined\\\" value\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTc2MjQ5MDU0LCJleHAiOjE1Nzg4NDEwNTR9.aWgqIwgNak0ahJj4ZlrLabQvFHf5uI8HQjoKeEGj4tc",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"message\": \"03. user3 => user1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/chat/send"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Conversation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4a3ebb0e-0176-4103-9b19-3e7431700542",
+						"exec": [
+							"pm.test(\"Successful GET request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+							"});",
+							"",
+							"pm.test(\"Status Code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTc2MjQ5MDU0LCJleHAiOjE1Nzg4NDEwNTR9.aWgqIwgNak0ahJj4ZlrLabQvFHf5uI8HQjoKeEGj4tc",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\": \"user1@email.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/chat/get"
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Conversation with invalid Body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5a196928-53cd-4f20-a986-4965a9abf5af",
+						"exec": [
+							"pm.test(\"Status Code 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Body returned matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"success\");",
+							"    pm.expect(pm.response.text()).to.include(\"message\");",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(false);",
+							"    pm.expect(jsonData.message).to.eql(\"WHERE parameter \\\"email\\\" has invalid \\\"undefined\\\" value\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTc2MjQ5MDU0LCJleHAiOjE1Nzg4NDEwNTR9.aWgqIwgNak0ahJj4ZlrLabQvFHf5uI8HQjoKeEGj4tc",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:8080/api/chat/get"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Last Message",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d9c05cf9-3a53-4c95-926c-cca3a5948e3c",
+						"exec": [
+							"pm.test(\"Successful GET request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+							"});",
+							"",
+							"pm.test(\"Status Code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Should return correct response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNTc2MjQ5MDU0LCJleHAiOjE1Nzg4NDEwNTR9.aWgqIwgNak0ahJj4ZlrLabQvFHf5uI8HQjoKeEGj4tc",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": "localhost:8080/api/chat/last"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
