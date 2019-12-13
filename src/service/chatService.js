@@ -1,72 +1,115 @@
 import { User, ChatRoom, ChatContent } from '../model';
 
-export const sendMessage = async ({ userId, message }, res) => {
-  const findUser = await User.findOne({ where: { email: userId } });
+const Pool = require('pg').Pool;
 
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'new_database',
+  password: 'postgres',
+  port: 5432,
+});
+
+const findUserInDB = (userId) => {
+  return User.findOne({
+    where: {
+      email: userId
+    }
+  });
+};
+
+const createChatRoomInDB = (idUserOne, idUserTwo) => {
+  return ChatRoom.create({
+    userOneId: idUserOne,
+    userTwoId: idUserTwo
+  });
+};
+
+const findChatRoomInDB = (idUserOne, idUserTwo) => {
+  return ChatRoom.findOne({
+    where: {
+      $or: [
+        {
+          userOneId: idUserOne,
+          userTwoId: idUserTwo
+        },
+        {
+          userOneId: idUserTwo,
+          userTwoId: idUserOne
+        }
+      ]
+    }
+  });
+};
+
+const createContentInDB = (message, id, idUserOne) => {
+  return ChatContent.create({
+    content: message,
+    chatRoomId: id,
+    userId: idUserOne
+  });
+};
+
+const findChatContentInDB = (idFindChatRoom) => {
+  return ChatContent.findAll({
+    where: {
+      chatRoomId: idFindChatRoom
+    },
+    order: [['createdAt', 'DESC']]
+  });
+};
+
+export const sendMessage = async ({ userId, message }, res) => {
+  const findUser = await findUserInDB(userId); /* Find User in Data Base */
+  const { id: idUserOne } = res.locals.decode;
+  const { id: idUserTwo } = findUser;
   if (findUser) {
-    const idUserOne = res.locals.decode.id;
-    const idUserTwo = findUser.dataValues.id;
-    const findChatRoom = await ChatRoom.findOne({
-      where: {
-        'userOneId': [idUserOne, idUserTwo],
-        'userTwoId': [idUserOne, idUserTwo]
-      }
-    });
+    const findChatRoom = await findChatRoomInDB(idUserOne, idUserTwo); /* Find Chat Room in Data Base */
+    const idFindChatRoom = findChatRoom && findChatRoom.id;
 
     if (findChatRoom) {
-      /* Create Chat Conten if exist Chat Room */
-      const createChatContent = await ChatContent.create({
-        content: message,
-        chatRoomId: findChatRoom.id,
-        userId: idUserOne
-      });
+      const createChatContent = await createContentInDB(message, idFindChatRoom, idUserOne); /* Create Chat Content if Chat Room exists in Data Base */
       return Promise.resolve({
         success: true,
         data: createChatContent
       });
     }
-    /* Create Chat Room if not exists Chat Room */
-    const createChatRoom = await ChatRoom.create({
-      'userOneId': idUserOne,
-      'userTwoId': idUserTwo
-    });
+    const createChatRoom = await createChatRoomInDB(idUserOne, idUserTwo); /* Create Chat Room if not exists Chat Room */
+    const idCreateChatRoom = createChatRoom.id;
 
     if (createChatRoom) {
-      /* Create Chat Content after Create Chat Room */
-      const createChatContent = await ChatContent.create({
-        content: message,
-        chatRoomId: createChatRoom.id,
-        userId: idUserOne
-      });
+      const createChatContent = await createContentInDB(message, idCreateChatRoom, idUserOne); /* Create Chat Content after Create Chat Room */
       return Promise.resolve({
         success: true,
         data: createChatContent
       });
     }
-    return Promise.reject({message: 'failed to create chat room'});
+    return Promise.reject({ message: 'failed to create chat room' });
   }
-  return Promise.reject({message: 'user not found'});
+  return Promise.reject({ message: 'user not found' });
 };
 
 export const getConversation = async ({ userId }, res) => {
-  const findUser = await User.findOne({ where: { email: userId } });
+  const findUser = await findUserInDB(userId); /* Find User in Data Base */
+  const { id: idUserOne } = res.locals.decode;
+  const { id: idUserTwo } = findUser;
 
   if (findUser) {
-    const idUserOne = res.locals.decode.id;
-    const idUserTwo = findUser.dataValues.id;
-    const findChatRoom = await ChatRoom.findOne({
-      where: { 'userOneId': [idUserOne, idUserTwo], 'userTwoId': [idUserOne, idUserTwo] },
-    });
+    const findChatRoom = await findChatRoomInDB(idUserOne, idUserTwo); /* Find Chat Room in Data Base */
+    const idFindChatRoom = findChatRoom && findChatRoom.id;
 
     if (findChatRoom) {
-      await ChatContent.update(
-        { isRead: true },
-        { where: { 'chatRoomId': findChatRoom.id, 'userId': idUserOne } }
-      );
-      const findChatContent = await ChatContent.findAll({
-        where: { 'chatRoomId': findChatRoom.id },
-        order: [['createdAt', 'DESC']]
-      });
+      await ChatContent.update({ /* Update for status isRead in Chat Content */
+        isRead: true
+      },
+        {
+          where: {
+            chatRoomId: findChatRoom.id,
+            userId: idUserTwo
+          }
+        });
+
+      const findChatContent = await findChatContentInDB(idFindChatRoom); /* Find Chat Content in Data Base */
       return Promise.resolve({
         success: true,
         data: findChatContent
@@ -78,67 +121,31 @@ export const getConversation = async ({ userId }, res) => {
 };
 
 export const lastMessage = async (req, res) => {
-  const idUserOne = res.locals.decode.id;
+  const { id: idUserOne } = res.locals.decode;
 
-  const findChatRoom = await ChatRoom.findAll({
-    where: {
-      $or: [
-        {
-          'userOneId': idUserOne,
-        },
-        {
-          'userTwoId': idUserOne
-        }
-      ]
-    }
-  });
+  const getLastMessage = await pool.query( /* Query SQL for get Last Message and Count Unread Message */
+    `SELECT *,
+    (SELECT COUNT (chat_contents."id") FROM chat_contents
+    WHERE chat_contents."chatRoomId" = chat_rooms."id"
+    AND NOT chat_contents."userId" = ${idUserOne}
+    AND chat_contents."isRead" = false) AS unread_count
 
-  if (findChatRoom) {
-    const getIdChatRoom = findChatRoom.map(idx => {
-      return idx.dataValues.id;
-    });
-    
-    let query = [];
-    const getChatContentOne = await ChatContent.findOne({
-      limit: 1,
-      where: { 'chatRoomId': getIdChatRoom[0] },
-      order: [['createdAt', 'DESC']]
-    });
-    query.push(getChatContentOne);
-    const getChatContentTwo = await ChatContent.findOne({
-      limit: 1,
-      where: { 'chatRoomId': getIdChatRoom[1] || getIdChatRoom },
-      order: [['createdAt', 'DESC']]
-    });
-    query.push(getChatContentTwo);
+    FROM chat_rooms
+    LEFT JOIN chat_contents
+    ON chat_rooms."id" = chat_contents."chatRoomId"
+    WHERE (chat_rooms."userOneId" = ${idUserOne} OR chat_rooms."userTwoId" = ${idUserOne})
 
-    let valueContent = query;
-    const idQueryOne = query[0].dataValues.id;
-    const idQueryTwo = query[1].dataValues.id;
-
-    const getUnreadOne = await ChatContent.findAll({
-      where: { 'chatRoomId': getIdChatRoom[0], 'userId': idUserOne, 'isRead': false }
-    });
-    const unreadOne = getUnreadOne.length;
-
-    const getUnreadTwo = await ChatContent.findAll({
-      where: { 'chatRoomId': getIdChatRoom[1] || getIdChatRoom, 'userId': idUserOne, 'isRead': false }
-    });
-    const unreadTwo = getUnreadTwo.length;
-
-    if (idQueryOne === idQueryTwo) {
-      const id = valueContent[0].id;
-      return Promise.resolve({
-        success: true,
-        unread: unreadOne,
-        data: valueContent[0]
-      });
-    }
+    AND (chat_contents."id" = (
+    SELECT MAX (chat_contents."id") FROM chat_contents
+    WHERE chat_contents."chatRoomId" = chat_rooms."id"
+    ))`
+  );
+  if (getLastMessage) {
     return Promise.resolve({
       success: true,
-      unread: unreadOne,
-      data: valueContent
+      data: getLastMessage.rows
     });
   }
-  return Promise.reject({ message: 'chat room not found' });
+  return Promise.reject();
 };
+

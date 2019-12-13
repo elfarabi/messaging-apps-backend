@@ -4,6 +4,8 @@ Messaging Apps is a backend application for chat features. This project uses the
 
 ## Table of Contents
 
+- [New Update](#new-update)
+
 - [Getting Started](#getting-started)
 
 - [Features](#features)
@@ -11,6 +13,10 @@ Messaging Apps is a backend application for chat features. This project uses the
 - [Folder Structure](#folder-structure)
 
 - [Documentation](#documentation)
+
+## New Update
+
+- #### Get All Last Message and Count unRead Message
 
 ## Getting Started
 
@@ -101,7 +107,14 @@ $ npm run start:dev
 
 ## Documentation
 
+- [Signup User](#signup-user)
+- [Login User](#login-user)
+- [Send Message and Reply Message](#send-message-and-reply-message)
+- [Get All Conversation with the Other Person](#get-all-conversation-with-the-other-person)
+- [Get Last Message and Count unRead Message](#get-last-message-and-count-unRead-message)
+
 ### Signup User
+
 
 - **URL**
     ```
@@ -204,8 +217,8 @@ $ npm run start:dev
 - **Body**
     ```
     {
-        "userId": "user3@email.com",
-        "message": "Morning Sir"
+        "userId": "user1@email.com",
+        "message": "03. user3 => user1"
     }
 
 - **Success Response**
@@ -217,12 +230,12 @@ $ npm run start:dev
         "success": true,
         "data": {
             "isRead": false,
-            "id": 8,
-            "content": "Good Morning",
-            "chatRoomId": 3,
-            "userId": 1,
-            "updatedAt": "2019-12-09T08:13:38.442Z",
-            "createdAt": "2019-12-09T08:13:38.442Z"
+            "id": 9,
+            "content": "03. user3 => user1",
+            "chatRoomId": 2,
+            "userId": 3,
+            "updatedAt": "2019-12-13T15:41:04.163Z",
+            "createdAt": "2019-12-13T15:41:04.163Z"
         }
     }
     ```
@@ -258,7 +271,7 @@ $ npm run start:dev
 - **Body**
     ```
     {
-        "userId": "user3@email.com"
+        "userId": "user1@email.com"
     }
 
 - **Success Response**
@@ -266,35 +279,39 @@ $ npm run start:dev
     Status: 200
     ```
     ```
-    [
-        {
-            "id": 6,
-            "content": "03. user1 => user3",
-            "isRead": true,
-            "createdAt": "2019-12-10T01:17:00.802Z",
-            "updatedAt": "2019-12-10T01:51:25.766Z",
-            "chatRoomId": 2,
-            "userId": 1
-        },
-        {
-            "id": 5,
-            "content": "02. user1 => user3",
-            "isRead": true,
-            "createdAt": "2019-12-09T15:52:11.730Z",
-            "updatedAt": "2019-12-10T01:51:25.766Z",
-            "chatRoomId": 2,
-            "userId": 1
-        },
-        {
-            "id": 3,
-            "content": "01. user3 => user1",
-            "isRead": true,
-            "createdAt": "2019-12-09T15:47:03.161Z",
-            "updatedAt": "2019-12-09T16:28:41.569Z",
-            "chatRoomId": 2,
-            "userId": 3
-        }
-    ]
+    
+    {
+        "success": true,
+        "data": [
+            {
+                "id": 9,
+                "content": "03. user3 => user1",
+                "isRead": false,
+                "createdAt": "2019-12-13T15:41:04.163Z",
+                "updatedAt": "2019-12-13T15:41:04.163Z",
+                "chatRoomId": 2,
+                "userId": 3
+            },
+            {
+                "id": 8,
+                "content": "02. user3 => user1",
+                "isRead": false,
+                "createdAt": "2019-12-13T15:40:59.465Z",
+                "updatedAt": "2019-12-13T15:40:59.465Z",
+                "chatRoomId": 2,
+                "userId": 3
+            },
+            {
+                "id": 7,
+                "content": "01. user3 => user1",
+                "isRead": false,
+                "createdAt": "2019-12-13T15:40:52.580Z",
+                "updatedAt": "2019-12-13T15:40:52.580Z",
+                "chatRoomId": 2,
+                "userId": 3
+            }
+        ]
+    }
     ```
 
 - **Error Response**
@@ -308,7 +325,7 @@ $ npm run start:dev
     }
     ```
 
-### Get Last Conversation
+### Get Last Message and Count unRead Message
 
 - **URL**
     ```
@@ -331,29 +348,34 @@ $ npm run start:dev
     ```
     ```
     {
-    "success": true,
-    "unread": 1,
-    "data": [
-        {
-            "id": 2,
-            "content": "02. user2 => user1",
-            "isRead": false,
-            "createdAt": "2019-12-09T15:44:03.046Z",
-            "updatedAt": "2019-12-09T15:44:03.046Z",
-            "chatRoomId": 1,
-            "userId": 2
-        },
-        {
-            "id": 6,
-            "content": "03. user1 => user3",
-            "isRead": true,
-            "createdAt": "2019-12-10T01:17:00.802Z",
-            "updatedAt": "2019-12-10T01:51:25.766Z",
-            "chatRoomId": 2,
-            "userId": 1
-        }
-    ]
-}
+        "success": true,
+        "data": [
+            {
+                "id": 6,
+                "createdAt": "2019-12-13T15:18:39.976Z",
+                "updatedAt": "2019-12-13T15:18:39.976Z",
+                "userOneId": 1,
+                "userTwoId": 2,
+                "content": "06. user1 => user2",
+                "isRead": false,
+                "chatRoomId": 1,
+                "userId": 1,
+                "unread_count": "0"
+            },
+            {
+                "id": 9,
+                "createdAt": "2019-12-13T15:41:04.163Z",
+                "updatedAt": "2019-12-13T15:41:04.163Z",
+                "userOneId": 3,
+                "userTwoId": 1,
+                "content": "03. user3 => user1",
+                "isRead": false,
+                "chatRoomId": 2,
+                "userId": 3,
+                "unread_count": "3"
+            }
+        ]
+    }
     ```
 
 - **Error Response**
@@ -366,4 +388,3 @@ $ npm run start:dev
         "message": "No token provided"
     }
     ```
- 
