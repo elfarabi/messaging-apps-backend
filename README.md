@@ -18,6 +18,7 @@ Messaging Apps is a backend application for chat features. This project uses the
 
 - #### Get All Last Message and Count unRead Message
 - #### Add for Unit Test
+- #### Add Postman Collection so everyone able to import the collection to the postmant and try it directly to se how this API Service works
 
 ## Getting Started
 
@@ -90,6 +91,8 @@ $ npm run cover
 ## Folder Structure
 
 ```
+├── documentation
+     ├── messaging-apps-backend.postman_collection.json
 ├── src
 │    ├── controller
 │    │   ├── chatController.js
@@ -118,15 +121,13 @@ $ npm run cover
 
 ## Documentation
 
-To try it direcly, you can import documentation to the postman and run server in your local machine to get try.
-
-The documentation in the folder test with name file 
+You can import Postman collection from /documentation/messaging-apps-backend.postman_collection.json to the postman and run server in your local machine to get try.
 
 - [Signup User](#signup-user)
 - [Login User](#login-user)
 - [Send Message and Reply Message](#send-message-and-reply-message)
-- [Get All Conversation with the Other Person](#get-all-conversation-with-the-other-person)
-- [Get Last Message and Count unRead Message](#get-last-message-and-count-unRead-message)
+- [Get List All Messages in Conversation](#get-list-all-messages-in-conversation)
+- [Get current user conversation with others followed by last message and unread count](#get-current-user-conversation-with-others-followed-by-last-message-and-unread-count)
 
 ### Signup User
 
@@ -266,7 +267,7 @@ The documentation in the folder test with name file
     }
     ```
 
-### Get All Conversation with the Other Person
+### Get List All Messages in Conversation
 
 - **URL**
     ```
@@ -340,7 +341,7 @@ The documentation in the folder test with name file
     }
     ```
 
-### Get Last Message and Count unRead Message
+### Get current user conversation with others followed by last message and unread count
 
 - **URL**
     ```
